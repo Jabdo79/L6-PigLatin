@@ -13,12 +13,13 @@ public class PigLatin {
 		
 		char[] vowels = "AEIOU".toCharArray();
 		char[] consonants = "BCDFGHJKLMNPQRSTVWXYZ".toCharArray();
+		char[] punctuation = ",.!?".toCharArray();
 		boolean cont = true;
 		while (cont) {
 			System.out.println("Please enter a line: ");
 			String english = sc.nextLine();
 			System.out.println("becomes: ");
-			
+
 			StringBuilder translated = new StringBuilder(english);
 			//adds spaces to make identifying the first and last word easier
 			translated.insert(0, " ");
@@ -33,6 +34,12 @@ public class PigLatin {
 					//if the current position being checked of the user line is equal to, ignoring case, a space + the current vowel being checked, perform the following
 					if(translated.substring(j, j+2).equalsIgnoreCase(" "+Character.toString(vowels[i]))){
 						int endOfWord = translated.indexOf(" ", j+1);
+						for (int k=0; k < punctuation.length; k++) {
+							int punctuationLoc = translated.indexOf(Character.toString(punctuation[k]), j + 1);
+							if (endOfWord > punctuationLoc && punctuationLoc >= 0){
+								endOfWord = punctuationLoc;
+							}
+						}
 						translated.insert(endOfWord, "way");
 					}
 				}
@@ -56,8 +63,16 @@ public class PigLatin {
 								firstVowel = currVowelLoc;
 						}
 						if(firstVowel<translated.length()){
-							moveConsonants = translated.substring(j+1, firstVowel);							
-							translated.insert(translated.indexOf(" ", j+1), moveConsonants+"ay");
+							moveConsonants = translated.substring(j+1, firstVowel);	
+							//check for end of word via space first then punctuation
+							int endOfWord = translated.indexOf(" ", j+1);
+							for (int k=0; k < punctuation.length; k++) {
+								int punctuationLoc = translated.indexOf(Character.toString(punctuation[k]), j + 1);
+								if (endOfWord > punctuationLoc && punctuationLoc >= 0){
+									endOfWord = punctuationLoc;
+								}
+							}
+							translated.insert(endOfWord, moveConsonants+"ay");
 							translated.delete(j+1, firstVowel);
 						}
 					}
